@@ -1,0 +1,95 @@
+@use '../../../variables';
+
+.cards {
+    color: variables.$clr-1;
+    .card {
+        &_front {
+            padding: 1.75rem 1.875rem;
+            background: url('../../../assets/img/bg-card-front.png');
+            position: relative;
+            > div {
+                width: 24.0625rem;
+                font-size: .875rem;
+                letter-spacing: .125rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                position: absolute;
+                bottom: 1.625rem;
+            }
+            &_number {
+                margin: 3.625rem 0 0;
+                font-size: 1.75rem;
+                letter-spacing: .1875rem;
+                word-spacing: .125rem;
+            }
+            &_cardholder {
+                margin: 0;
+                text-transform: uppercase;
+            }
+        }
+        &_back {
+            margin: 2.25rem 0 0 5.9375rem;
+            background: url('../../../assets/img/bg-card-back.png');
+            &_cvc {
+                padding: 6.875rem 3.75rem 0 0;
+                text-align: right;
+                font-size: .9375rem;
+            }
+        }
+        &_front,
+        &_back {
+            width: 27.9375rem;
+            height: 15.3125rem;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-radius: .75rem;
+            position: relative;
+        }
+    }
+}
+
+@media(max-width: 575px) {
+    .cards {
+        display: flex;
+        flex-direction: column-reverse;
+        .card {
+            &_front {
+                padding: .625rem 1.25rem .625rem 1.375rem;
+                transform: translate(-1.75rem, -3.875rem);
+                z-index: 1;
+                > div {
+                    width: 15.3125rem;
+                    font-size: .625rem;
+                    letter-spacing: .0625rem;
+                    bottom: 1.25rem;
+                }
+                &_number {
+                    margin: 1.5625rem 0 0 0;
+                    font-size: 1.125rem;
+                    letter-spacing: .125rem;
+                    word-spacing: .0625rem;
+                }
+                svg {
+                    scale: .62;
+                    margin-left: -1rem;
+                }
+            }
+            &_back {
+                margin: 0;
+                transform: translateX(1.75rem);
+                &_cvc {
+                    padding: 4.375rem 2.5rem 0 0;
+                    font-size: .625rem;
+                    letter-spacing: .125rem;
+                }
+            }
+            &_front,
+            &_back {
+                width: 17.875rem;
+                height: 9.8125rem;
+                border-radius: .5rem;
+            }
+        }
+    }
+}

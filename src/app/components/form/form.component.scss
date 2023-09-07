@@ -1,0 +1,90 @@
+@use '../../../variables';
+
+form {
+    width: 23.75rem;
+    .form_control {
+        margin-bottom: 1.75rem;
+        color: variables.$clr-3;
+        label {
+            display: block;
+            margin-bottom: .375rem;
+            font-size: .75rem;
+            letter-spacing: .125rem;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        input {
+            width: 100%;
+            padding: .625rem .9375rem;
+            font-size: 1.125rem;
+            outline: none;
+            border: .0625rem solid variables.$clr-1;
+            border-radius: .625rem;
+            cursor: pointer;
+            &::placeholder {
+                opacity: .5;
+            }
+            &:focus {
+                border-color: variables.$clr-4;
+            }
+            &.error {
+                border-color: variables.$clr-error;
+            }
+        }
+    }
+    .form_inputs_group {
+        display: flex;
+        gap: 1.125rem;
+    }
+    .expiration_date_inputs {
+        > div {
+            display: flex;
+            gap: .625rem;
+        }
+        input {
+            width: 5rem;
+            &.error {
+                border-color: variables.$clr-error;
+            }
+        }
+    }
+    .confirm_btn {
+        width: 100%;
+        margin-top: .625rem;
+        padding: .9375rem 0;
+        border: none;
+        border-radius: .625rem;
+        background: variables.$clr-3;
+        color: variables.$clr-1;
+        font-size: 1.125rem;
+        cursor: pointer;
+    }
+    small {
+        display: inline-block;
+        margin-top: .625rem;
+        color: variables.$clr-error;
+        font-size: .75rem;
+    }
+}
+
+@media(max-width: 575px) {
+    form {
+        width: 100%;
+        margin-top: -0.9375rem;
+        padding: 0 1.375rem;
+        .form_control {
+            margin-bottom: 1.5rem;
+        }
+        .form_inputs_group {
+            gap: .625rem;
+        }
+        .expiration_date_inputs {
+            input {
+                width: 4.5625rem;
+            }
+        }
+        .confirm_btn {
+            margin-top: .375rem;
+        }
+    }
+}
