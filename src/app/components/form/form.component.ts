@@ -22,30 +22,30 @@ import { CreditCardService } from 'src/app/services/credit-card.service';
         <label for="cardholder">Cardholder name</label>
         <input
           type="text"
-          [class.error]="cardholder?.invalid && submitBtnClicked"
+          [class.error]="cardholder?.invalid && submitted"
           name="cardholder"
           id="cardholder"
           placeholder="e.g. Jane Appleseed"
           formControlName="cardholder"
         >
-        <div *ngIf="submitBtnClicked">
-          <small *ngIf="cardholder?.hasError('required')">Can't be blank</small>
-          <small *ngIf="cardholder?.hasError('maxlength')">Cardholder name must consists of max. 50 characters length</small>
+        <div *ngIf="submitted">
+          <small *ngIf="cardholder?.errors?.['required']">Can't be blank</small>
+          <small *ngIf="cardholder?.errors?.['maxlength']">Cardholder name must consists of max. 50 characters length</small>
         </div>
       </div>
       <div class="form_control">
         <label for="card_number">Card number</label>
         <input
           type="text"
-          [class.error]="cardNumber?.invalid && submitBtnClicked"
+          [class.error]="cardNumber?.invalid && submitted"
           name="card_number"
           id="card_number"
           placeholder="e.g. 1234 5678 9123 0000"
           formControlName="cardNumber"
         >
-        <div *ngIf="submitBtnClicked">
-          <small *ngIf="cardNumber?.hasError('required')">Can't be blank</small>
-          <small *ngIf="cardNumber?.hasError('pattern')">Wrong format, numbers only</small>
+        <div *ngIf="submitted">
+          <small *ngIf="cardNumber?.errors?.['required']">Can't be blank</small>
+          <small *ngIf="cardNumber?.errors?.['pattern']">Wrong format, numbers only</small>
         </div>
       </div>
       <div class="form_inputs_group">
@@ -55,7 +55,7 @@ import { CreditCardService } from 'src/app/services/credit-card.service';
             <div>
               <input
                 type="number"
-                [class.error]="mm?.invalid && submitBtnClicked"
+                [class.error]="mm?.invalid && submitted"
                 name="mm"
                 id="expiration_date"
                 placeholder="MM"
@@ -63,15 +63,15 @@ import { CreditCardService } from 'src/app/services/credit-card.service';
               >
               <input
                 type="number"
-                [class.error]="yy?.invalid && submitBtnClicked"
+                [class.error]="yy?.invalid && submitted"
                 name="yy"
                 placeholder="YY"
                 formControlName="yy"
               >
             </div>
-            <div *ngIf="submitBtnClicked">
-              <small *ngIf="mm?.hasError('required') || yy?.hasError('required')">Can't be blank</small>
-              <small *ngIf="mm?.hasError('min') || mm?.hasError('max') || yy?.hasError('min') || yy?.hasError('max')">Invalid month or year</small>
+            <div *ngIf="submitted">
+              <small *ngIf="mm?.errors?.['required'] || yy?.errors?.['required']">Can't be blank</small>
+              <small *ngIf="mm?.errors?.['min'] || mm?.errors?.['max'] || yy?.errors?.['min'] || yy?.errors?.['max']">Invalid month or year</small>
             </div>
           </div>
         </div>
@@ -79,21 +79,21 @@ import { CreditCardService } from 'src/app/services/credit-card.service';
           <label for="cvc">CVC</label>
           <input
             type="number"
-            [class.error]="cvc?.invalid && submitBtnClicked"
+            [class.error]="cvc?.invalid && submitted"
             name="cvc"
             id="cvc"
             placeholder="e.g. 123"
             formControlName="cvc"
           >
-          <div *ngIf="submitBtnClicked">
-            <small *ngIf="cvc?.hasError('required')">Can't be blank</small>
-            <small *ngIf="cvc?.hasError('pattern')">Wrong format, numbers only</small>
+          <div *ngIf="submitted">
+            <small *ngIf="cvc?.errors?.['required']">Can't be blank</small>
+            <small *ngIf="cvc?.errors?.['pattern']">Wrong format, numbers only</small>
           </div>
         </div>
       </div>
       <button class="confirm_btn">Confirm</button>
     </form>
-    <app-success-modal *ngIf="completedForm" (onBackToForm)="backToForm()"></app-success-modal>
+    <app-success-modal *ngIf="completedForm" (onBackToForm)="resetForm()"></app-success-modal>
   `,
   styleUrls: ['./form.component.scss']
 })
@@ -101,40 +101,36 @@ import { CreditCardService } from 'src/app/services/credit-card.service';
 export class FormComponent implements OnInit {
   cardForm!: FormGroup<any>;
   completedForm = false;
-  submitBtnClicked = false; 
+  submitted = false; 
 
   constructor(
     private fb: FormBuilder,
-    public creditCard: CreditCardService
-  ) {}
+    public creditCardService: CreditCardService
+  ){}
 
   ngOnInit(): void {
     this.cardForm = this.fb.group({
       cardholder: [
-        '',
-        [
+        '', [
           Validators.required,
           Validators.maxLength(50)
         ]
       ],
       cardNumber: [
-        '',
-        [
+        '', [
           Validators.required,
           Validators.pattern(/^[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/)
         ]
       ],
       mm: [
-        '',
-        [
+        '', [
           Validators.required,
           Validators.min(1),
           Validators.max(12)
         ]
       ],
       yy: [
-        '',
-        [
+        '', [
           Validators.required,
           Validators.min(1),
           Validators.max(99)
@@ -146,23 +142,25 @@ export class FormComponent implements OnInit {
           Validators.pattern(/^[0-9]{3}$/)
         ]
       ]
+    }, {
+      updateOn: 'submit'
     });
 
     this.cardForm.valueChanges.subscribe(form => {
-      this.creditCard.creditCardData = form;
-      this.creditCard.formatValues();
+      this.creditCardService.creditCardData = form;
+      this.creditCardService.formatValues();
     });
   }
 
   submitForm(): void {
-    this.submitBtnClicked = true;
+    this.submitted = true;
     if (this.cardForm.valid) {
       this.completedForm = true;
-      this.submitBtnClicked = false;
+      this.submitted = false;
     }
   }
 
-  backToForm(): void {
+  resetForm(): void {
     this.cardForm.patchValue({
       cardholder: '',
       cardNumber: '',
@@ -171,7 +169,7 @@ export class FormComponent implements OnInit {
       cvc: ''
     });
 
-    this.creditCard.creditCardData = {
+    this.creditCardService.creditCardData = {
       cardholder: "Jane Appleseed",
       cardNumber: "0000 0000 0000 0000",
       mm: "00",
